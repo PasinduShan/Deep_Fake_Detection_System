@@ -1,15 +1,18 @@
-<figure class="table"></figure>
+
+
+<figure class=""></figure>
     <table class="ck-table-resized" >
         <colgroup>
             <col style="width:50%;">
             <col style="width:50%;">
         </colgroup>
+        
         <tbody>
             <tr>
                 <td colspan="2" style="text-align: center;">
                     <figure class="image image_resized" style=" text-align: center;" data-ckbox-resource-id="ff_IENenIurL"></figure>
                         <picture>
-                            <!-- <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/SLTC_Research_University_Logo.png" alt="" width="250" height="auto"> -->
+                            <!--<img src="" alt="" width="250" height="auto">-->
                         </picture>
                     </figure>
                 </td>
@@ -24,67 +27,65 @@
                 
 
             </tr>
-            
+            <tr>
+            <td colspan="2">
+                <h2 style="padding-top:0px ; text-align: center;">Result: {{ predicted_class }}</h1>
+                    
+                    
+                      <script>
+                        function updateNeedle(value) {
+                          const needle = document.getElementById('needle');
+                          const gaugeContainer = document.querySelector('.gauge-container');
+                          const containerWidth = gaugeContainer.offsetWidth;
+                    
+                          // Ensure value is between 0 and 1
+                          const clampedValue = Math.max(0, Math.min(value, 1));
+                          // Map value to horizontal position in pixels
+                          const leftPosition = clampedValue * (containerWidth - 20); // Subtract padding/margin
+                          needle.style.left = `${leftPosition}px`;
+                        }
+                    
+                        // Example: Update the needle position
+                        updateNeedle(0.5); // Change 0.7 to your desired value
+                      </script>
+
+
+
+
+
+                <p></strong><br>
+                    <strong>Probability to Fake: </strong> <span>{{ probability|floatformat:2 }}%</span>
+                    <!-- Analog Meter Container -->
+                
+
+                </p>
+            </td>
+            </tr>
         
             
             
             <tr>
                 <td >
-                    <p style="text-align:center;"><span style="background-color:#ff8f00;color:#fafafa;">&nbsp;HEATMAP&nbsp;</span></p>
+                    <p style="text-align:center;"><span style="background-color:#ff8f00;color:#fafafa;">&nbsp;Saliency Map&nbsp;</span> (On Progress)</p>
                     <figure class="image image_resized" style=" text-align: center;" data-ckbox-resource-id="ff_IENenIurL">
                         <picture>
-                            <!-- <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/SLTC_Research_University_Logo.png" alt="" width="250" height="auto"> -->
+                            <img src="data:image/png;base64,{{ saliency_map }}" alt="Saliency Heatmap" width="250" height="auto">
                         </picture>
+                        
                     </figure>
                 </td>
-                <td style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); padding: 11; text-align: center; border-radius: 10px;">
-                    
-                    <p><span style="color:#212121;font-size:22px;"><strong>Final Result </span><span style="font-size:22px;">:&nbsp;
+                <td >
+                    <p style="text-align:center;"><span >&nbsp;Original Image&nbsp;</span> </p>
+                    <figure class="image image_resized" style=" text-align: center;" data-ckbox-resource-id="ff_IENenIurL">
+                        <picture>
+                            <img src="data:image/png;base64,{{ original_image }}" alt="original_image" width="250" height="auto">
+                        </picture>
                         
-                            {{ predicted_class }}&nbsp;
-                        </span></strong>
-                        <!-- Analog Meter Container -->
-                    <div class="meter-container">
-                        <div class="needle" id="needle"></div>
-                        <div class="center-circle"></div>
-                    </div>
-                    
-                    <!-- Display Probability Value -->
-                    
-                    
-
-                        <!--<strong>Threshold Value: </strong><span>{{ threshold|floatformat:2 }}</span><br> -->
-                        <strong>Probability of Fake: </strong> <span>{{ probability|floatformat:2 }}%</span>
-                        
-                    
-
-                    <script>
-                        // Assuming {{ probability|floatformat:2 }} is rendered by the backend
-                        const probability = parseFloat("{{ probability|floatformat:2 }}");
-                        const needle = document.getElementById('needle');
-                        const probabilityText = document.getElementById('probability-value');
-
-                        // Update the needle's rotation based on the probability (0-100 scale)
-                        const rotationDegree = (probability * 180) / 100; // Convert 0-100 to 0-180 degrees
-                        needle.style.transform = `translateX(-50%) translateY(-100%) rotate(${rotationDegree}deg)`;
-
-                        // Update the probability text
-                        probabilityText.innerText = `${probability}%`;
-                    </script>
-
-
-
-                        
-                        
-                        
-                        
-                        
-                    
-                    
-                       
-                    </p>
+                    </figure>
                 </td>
+                
             </tr>
+            
         </tbody>
     </table>
 </figure>
@@ -95,17 +96,17 @@
 
     
     
-            body {
+        body {
                 background-image: url('https://wallpapers.com/images/hd/tech-background-2h35klpvdjfjmx5e.jpg');
                 font-family: Arial, sans-serif;
-                background-size: cover;
-                text-align: center;
-                justify-content:center;
-                align-items: center;
-                display: flex;
-            }
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+        }
 
-            .high-probability {
+        .high-probability {
             
             color: #ff0000;
             font-size: 22px;
@@ -132,43 +133,60 @@
     
         }
 
-         /* Center the meter and make it a half-circle */
-        .meter-container {
-            position: relative;
-            width: 200px;
-            height: 100px;
-            border-radius: 100px 100px 0 0;
-            
-            background: conic-gradient(#4CAF50 0deg 180deg, #b71c1c 180deg 360deg); /* Green and Red segments */
-            overflow: hidden;
-            margin: 50px auto;
-        }
+        .gauge-container {
+      position: relative;
+      width: 400px;
+      height: 100px;
+      border: 2px solid black;
+      border-radius: 0px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      overflow: hidden;
+      padding: 30px;
+    
+    }
 
-        /* Needle style - make it bolder */
-        .needle {
-            position: absolute;
-            width: 5px; /* Increased width for a bolder needle */
-            height: 90px;
-            background-color: black;
-            top: 100%;
-            left: 50%;
-            transform-origin: 50% 100%;
-            transform: translateX(-50%) translateY(-100%);
-            transition: transform 0.5s ease-out;
-        }
+    .gauge-scale {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      
+      
+    }
 
-        /* Center circle */
-        .center-circle {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background-color: black;
-            top: 100%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
+    .gauge-scale span {
+      font-size: 16px;
+    }
 
+    .needle {
+      position: absolute;
+      bottom: 0;
+      width: 2px;
+      height: 100%;
+      background: red;
+      transition: left 0.3s ease;
+    }
+
+    .labels {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      position: absolute;
+      top: 10px;
+      font-weight: bold;
+    }
+
+    .labels .fake {
+      color: rgb(255, 0, 0);
+    }
+
+    .labels .real {
+      color: rgb(12, 125, 2);
+      text-align: right;
+    }
         /* Text to show the probability */
         .probability-text {
             text-align: center;
