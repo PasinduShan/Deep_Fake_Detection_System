@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Video Analysis Results{% endblock %}
+
+{% block content %}
+<div class="results-container">
+    <h2>Deep Fake Detection Results</h2>
+    
+    <!-- Overall Model Results -->
+    <div class="model-summary">
+        <div class="model-box">
+            <h3>Video Model Prediction (v1 Model)</h3>
+            <p class="prediction-text {% if prediction == 'Fake' %}fake{% else %}real{% endif %}">
+                {{ prediction }}
+            </p>
+            <div class="progress-container">
+                <div class="progress">
+                    <div class="progress-bar" style="width: {{ confidence }}%">
+                        {{ confidence|floatformat:1 }}%
+                    </div>
+                </div>
+                <div class="probability-text">
+                    <span>Real: {{ real_probability|floatformat:1 }}%</span>
+                    <span>Fake: {{ fake_probability|floatformat:1 }}%</span>
+                </div>
+            </div>
+        </div>
+
+        
+    </div>
+
+    <!-- Frame Analysis Results -->
+    <div class="frame-analysis">
+        <h3>Frame-by-Frame Analysis (i1 Model)</h3>
+        <div class="frames-grid">
+            {% for result in frame_results %}
+            <div class="frame-card">
+                <div class="frame-images">
+                    <div class="original-frame">
+                        <h4>Original Frame</h4>
+                        <img src="{{ result.frame }}" alt="Frame">
+                    </div>
+                    {% if result.face %}
+                    <div class="processed-face">
+                        <h4>Detected Face</h4>
+                        <img src="{{ result.face }}" alt="Face">
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="frame-result">
+                    <p class="prediction {% if result.prediction == 'Fake' %}real{% else %}fake{% endif %}">
+                        {{ result.prediction }}
+                    </p>
+                    <div class="confidence-meter">
+                        <div class="progress">
+                            <div class="progress-bar" style="width: {{ result.confidence }}%">
+                                {{ result.confidence|floatformat:1 }}%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <a href="{% url 'p_super' %}" class="button">
+        <span>Analyze Another Video</span>
+    </a>
+</div>
+
+<style>
+    .results-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+
+    .model-summary {
+        margin-bottom: 3rem;
+    }
+
+    .model-box {
+        background: #f8f9fa;
+        padding: 2rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+    }
+
+    .prediction-text {
+        font-size: 24px;
+        font-weight: bold;
+        padding: 0.5rem 2rem;
+        border-radius: 5px;
+        display: inline-block;
+        margin: 1rem 0;
+    }
+
+    .prediction-text.fake {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .prediction-text.real {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .frames-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .frame-card {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .frame-images {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+    }
+
+    .frame-images img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+
+    .frame-images h4 {
+        font-size: 14px;
+        margin: 0.5rem 0;
+        color: #21687e;
+    }
+
+    .frame-result {
+        margin-top: 1rem;
+        text-align: center;
+    }
+
+    .prediction {
+        font-weight: bold;
+        padding: 0.25rem 1rem;
+        border-radius: 4px;
+        display: inline-block;
+        margin-bottom: 0.5rem;
+    }
+
+    .prediction.fake {
+        background-color:#28a745 ;
+        color: white;
+    }
+
+    .prediction.real {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .progress-container {
+        margin: 1rem 0;
+    }
+
+    .progress {
+        height: 20px;
+        background: #e9ecef;
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 0.5rem 0;
+    }
+
+    .progress-bar {
+        background: #21687e;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        transition: width 0.3s ease;
+    }
+
+    .probability-text {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .button {
+        display: inline-block;
+        background-color: #21687e;
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 5px;
+        text-decoration: none;
+        margin-top: 2rem;
+        transition: all 0.3s ease;
+    }
+
+    .button:hover {
+        background-color: #184d5e;
+        transform: translateY(-2px);
+    }
+
+    .prediction-text.no-audio {
+        background-color: #6c757d;
+        color: white;
+    }
+</style>
+{% endblock %}

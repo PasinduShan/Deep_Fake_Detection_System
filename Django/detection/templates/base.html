@@ -1,0 +1,105 @@
+<!-- templates/base.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Prediction Platform{% endblock %}</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            height: 100vh;
+            padding: 20px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            text-align: left;
+        }
+        .sidebar a {
+            display: block;
+            color: #ecf0f1;
+            padding: 15px 20px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            
+        }
+        .sidebar a:hover {
+            background-color: #34495e;
+        }
+        .sidebar a.active {
+            background-color: #2980b9;
+        }
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            width: calc(100% - 250px);
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div style="text-align: center; padding: 20px;">
+            <a href="{% url 'index' %}">
+            <img src="{% static 'images/logo.png' %}" alt="Logo" style="max-width: 180px;">
+            </a>
+            <p style="color: #ecf0f1; margin-top: -15px;">Seeing through deepfakes</p>
+        </div>
+        <style>
+            .styled-frame {
+            position: relative;
+            margin: 40px 20px;
+            }
+            .styled-frame::before {
+            content: '';
+            position: absolute;
+            top: -2px; right: -2px; bottom: -2px; left: -2px;
+            background: #2980b9;
+            border-radius: 7px;
+            z-index: -1;
+            }
+        </style>
+        
+        
+        <style>
+            .rainbow-frame {
+            position: relative;
+            margin: 40px 20px;  /* Added margin */
+            }
+            .rainbow-frame::before {
+            content: '';
+            position: absolute;
+            top: -2px; right: -2px; bottom: -2px; left: -2px;
+            background: linear-gradient(90deg, #8f00ff,#FFFF00);
+            background-size: 400% 400%;
+            animation: rainbow 5s ease infinite;
+            border-radius: 7px;
+            z-index: -1;
+            
+            }
+            @keyframes rainbow {
+            0% { background-position: 0% 50% }
+            50% { background-position: 100% 50% }
+            100% { background-position: 0% 50% }
+            50% { background-position: 100% 50% }
+            }
+        </style>
+        <a href="{% url 'p_super' %}" class="rainbow-frame {% if request.resolver_match.url_name == 'p_super' %}active{% endif %}" style="font-weight: bold;">Video  (multi model)</a>
+        <a href="{% url 'p_image' %}" class="styled-frame {% if request.resolver_match.url_name == 'p_image' %}active{% endif %}" style="font-weight: bold;">Image (i1 model)</a>
+        <a href="{% url 'p_voice' %}" class="styled-frame {% if request.resolver_match.url_name == 'p_voice' %}active{% endif %}" style="font-weight: bold;">Audio (a1 model)</a>
+        </div>
+
+    <div class="content">
+        {% block content %}
+        <!-- Page-specific content goes here -->
+        {% endblock %}
+    </div>
+</body>
+</html>

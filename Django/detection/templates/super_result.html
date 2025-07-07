@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="result-container">
+    <h2>Multi-Model Detection Results</h2>
+    
+    <div class="prediction-box">
+        <h3>Final Prediction: {{ final_prediction }}</h3>
+        <div class="confidence-meter">
+            <div class="progress">
+                <div class="progress-bar progress-final" role="progressbar" 
+                                 style="width: {{ final_confidence }}%;"
+                                 aria-valuenow="{{ final_confidence }}" 
+                                 aria-valuemin="0" aria-valuemax="100">
+                                {{ final_confidence }}%
+                            </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="model-results">
+        <div class="model-box">
+            <h4>Image Model Confidence</h4>
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" 
+                     style="width: {{ image_confidence }}% ;">
+                    {{ image_confidence }}%
+                </div>
+            </div>
+        </div>
+
+        <div class="model-box">
+            <h4>Video Model Confidence</h4>
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" 
+                     style="width: {{ video_confidence }}%;">
+                    {{ video_confidence }}%
+                </div>
+            </div>
+        </div>
+
+        
+    </div>
+
+    <div class="frame-samples">
+        <h4>Sample Frames Analyzed</h4>
+        <div class="frame-grid">
+            {% for frame in sample_frames %}
+            <img src="{{ frame }}" alt="Frame {{ forloop.counter }}" class="sample-frame">
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="frame-analysis">
+        <h3>Frame-by-Frame Analysis</h3>
+        <div class="frames-grid">
+            {% for result in frame_results %}
+            <div class="frame-card">
+                <div class="frame-images">
+                    <div class="original">
+                        <h5>Original Frame</h5>
+                        <img src="{{ result.frame }}" alt="Original Frame">
+                    </div>
+                    {% if result.face %}
+                    <div class="processed">
+                        <h5>Processed Face</h5>
+                        <img src="{{ result.face }}" alt="Processed Face">
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="frame-result">
+                    <p class="prediction {% if result.prediction == 'Fake' %}fake{% else %}real{% endif %}">
+                        {{ result.prediction }}
+                    </p>
+                    <div class="confidence-bar">
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" 
+                                 style="width: {{ result.confidence }}%">
+                                {{ result.confidence|floatformat:1 }}%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="actions">
+        <a href="{% url 'p_super' %}" class="btn btn-primary">Analyze Another Video</a>
+    </div>
+</div>
+
+<style>
+    .result-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .prediction-box {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .model-results {
+        display: grid;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    .model-box {
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 5px;
+    }
+    .progress {
+        height: 25px;
+        background: #e9ecef;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+    .progress-bar {
+        background: #21687e;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .progress-final {
+        /* width is set inline */
+    }
+    .frame-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    .sample-frame {
+        width: 100%;
+        height: auto;
+        border-radius: 5px;
+    }
+    .actions {
+        text-align: center;
+        margin-top: 2rem;
+    }
+    .frame-analysis {
+        margin-top: 3rem;
+    }
+
+    .frames-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .frame-card {
+        background: white;
+        border-radius: 8px;
+        padding: 1rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .frame-images {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .frame-images img {
+        width: 100%;
+        height: auto;
+        border-radius: 4px;
+    }
+
+    .frame-images h5 {
+        margin: 0.5rem 0;
+        color: #21687e;
+    }
+
+    .frame-result {
+        margin-top: 1rem;
+        text-align: center;
+    }
+
+    .prediction {
+        font-weight: bold;
+        padding: 0.25rem 1rem;
+        border-radius: 4px;
+        display: inline-block;
+        margin-bottom: 0.5rem;
+    }
+
+    .prediction.fake {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .prediction.real {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .confidence-bar {
+        margin-top: 0.5rem;
+    }
+
+    .progress {
+        height: 20px;
+        background: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        background: #21687e;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+    }
+</style>
+{% endblock %}

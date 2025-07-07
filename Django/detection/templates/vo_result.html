@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Voice Detection Result{% endblock %}
+
+{% block content %}
+<div class="result-container">
+    <h1>Voice Detection Result</h1>
+    
+    <div class="result-card">
+        <div class="result-header {% if predicted_class == 'fake' %}fake{% else %}real{% endif %}">
+            <h2>{{ predicted_class|title }} Voice</h2>
+        </div>
+        
+        <div class="result-details">
+            <p>Confidence Score: {{ confidence|floatformat:2 }}%</p>
+            
+            <div class="progress-bar">
+                <div class="progress" {% if confidence %}style="width: {{ confidence|stringformat:'d' }}%"{% endif %}></div>
+            </div>
+        </div>
+        
+        <div class="actions">
+            <a href="{% url 'p_voice' %}" class="try-again-btn">Try Another File</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .result-container {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .result-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .result-header {
+        padding: 20px;
+        color: white;
+    }
+
+    .result-header.fake {
+        background-color: #ff4444;
+    }
+
+    .result-header.real {
+        background-color: #00C851;
+    }
+
+    .result-details {
+        padding: 20px;
+    }
+
+    .progress-bar {
+        background: #f0f0f0;
+        border-radius: 20px;
+        height: 20px;
+        margin: 20px 0;
+        overflow: hidden;
+    }
+
+    .progress {
+        background: #21687e;
+        height: 100%;
+        transition: width 0.5s ease-in-out;
+    }
+
+    .try-again-btn {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #21687e;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        margin: 20px 0;
+    }
+
+    .try-again-btn:hover {
+        background-color: #184d5e;
+    }
+</style>
+{% endblock %}

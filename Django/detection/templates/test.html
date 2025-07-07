@@ -1,108 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Horizontal Moving Needle</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-
-    .gauge-container {
-      position: relative;
-      width: 400px;
-      height: 100px;
-      border: 2px solid black;
-      border-radius: 0px;
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      overflow: hidden;
-      padding: 30px;
-    
-    }
-
-    .gauge-scale {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      
-      
-    }
-
-    .gauge-scale span {
-      font-size: 16px;
-    }
-
-    .needle {
-      position: absolute;
-      bottom: 0;
-      width: 2px;
-      height: 100%;
-      background: red;
-      transition: left 0.3s ease;
-    }
-
-    .labels {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-      position: absolute;
-      top: 10px;
-      font-weight: bold;
-    }
-
-    .labels .fake {
-      color: rgb(255, 0, 0);
-    }
-
-    .labels .real {
-      color: rgb(12, 125, 2);
-      text-align: right;
-    }
-  </style>
+    <title>Video DeepFake Detection</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
 </head>
 <body>
-  <div class="gauge-container">
-    <div class="needle" id="needle"></div>
-    <div class="gauge-scale">
-      <span>0</span>
-      <span>0.2</span>
-      <span>0.4</span>
-      <span>0.6</span>
-      <span>0.8</span>
-      <span>1</span>
-    </div>
-    <div class="labels">
-      <span class="fake">   Fake</span>
-      <span class="real">   Real</span>
-    </div>
-  </div>
+<div class="container mt-5">
+    <h1 class="text-center">Video DeepFake Detection</h1>
+    <form method="POST" enctype="multipart/form-data" class="mt-4">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="video_file" class="form-label">Upload Video:</label>
+            <input type="file" name="video_file" id="video_file" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Detect</button>
+    </form>
 
-  <script>
-    function updateNeedle(value) {
-      const needle = document.getElementById('needle');
-      const gaugeContainer = document.querySelector('.gauge-container');
-      const containerWidth = gaugeContainer.offsetWidth;
+    {% if prediction_result %}
+        <hr>
+        <h3>Prediction Results</h3>
+        <p><strong>Classification:</strong> {{ prediction_result.prediction }}</p>
+        <p><strong>Confidence:</strong> {{ prediction_result.confidence|floatformat:2 }}%</p>
+        <p><strong>Probability Distribution:</strong></p>
+        <ul>
+            <li>Fake: {{ prediction_result.fake_probability|floatformat:2 }}%</li>
+            <li>Real: {{ prediction_result.real_probability|floatformat:2 }}%</li>
+        </ul>
+    {% endif %}
 
-      // Ensure value is between 0 and 1
-      const clampedValue = Math.max(0, Math.min(value, 1));
-      // Map value to horizontal position in pixels
-      const leftPosition = clampedValue * (containerWidth - 20); // Subtract padding/margin
-      needle.style.left = `${leftPosition}px`;
-    }
+    {% if frames_visualization %}
+        <hr>
+        <h3>Frame Processing Visualization</h3>
+        <img src="{{ frames_visualization }}" alt="Frames Visualization" class="img-fluid">
+    {% endif %}
 
-    // Example: Update the needle position
-    updateNeedle(0.5); // Change 0.7 to your desired value
-  </script>
-  
+    {% if error %}
+        <hr>
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+</div>
 </body>
 </html>

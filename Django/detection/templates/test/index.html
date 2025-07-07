@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FakeOut - Advanced</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <img src="https://img.freepik.com/free-vector/graident-ai-robot-vectorart_78370-4114.jpg" alt="FakeOut Logo">
+            <h1>FakeOut</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#video-prediction" >Video Prediction</a></li>
+                <li><a href="#image-prediction">Image Prediction</a></li>
+                <li><a href="#audio-prediction">Audio Prediction</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="upload-section">
+            <h2 id="selected-option">Upload Video</h2>
+            <input type="file" id="fileUpload" accept="video/*,image/*,audio/*">
+            <button id="uploadBtn">Upload File</button>
+        </div>
+        <div class="status">
+            <p id="statusText">Preparing</p>
+        </div>
+        
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

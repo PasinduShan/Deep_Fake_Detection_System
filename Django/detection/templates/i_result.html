@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<figure class="">
+    <table class="ck-table-resized" style="margin: auto;">
+        <colgroup>
+            <col style="width:50%;">
+            <col style="width:50%;">
+        </colgroup>
+
+        <tbody>
+            <tr>
+                <td colspan="2" style="text-align: center;">
+                    <figure class="image image_resized" style="text-align: center;" data-ckbox-resource-id="ff_IENenIurL">
+                        <picture>
+                            <!--<img src="" alt="" width="250" height="auto">-->
+                        </picture>
+                    </figure>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2" style="text-align: center;">
+                    <h1 style="padding-top: 0px;">DEEP FAKE DETECTION</h1>
+                    <h1 style="margin-top: -20px; margin-bottom: 50px;">SYSTEM</h1>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2">
+                    <div id="prediction-text" style="padding: 10px; font-size: 22px; color: white; font-weight: bold; text-align: center; margin: 15px;">
+                        <!-- This text will be dynamically updated -->
+                    </div>
+                    <script>
+                        function updatePrediction(predictedClass) {
+                            const predictionText = document.getElementById('prediction-text');
+                            if (predictedClass === 'Real') {
+                                predictionText.style.backgroundColor = 'green';
+                                predictionText.textContent = 'Detected : Real';
+                            } else if (predictedClass === 'Fake') {
+                                predictionText.style.backgroundColor = 'red';
+                                predictionText.textContent = 'Detected : Fake';
+                            } else {
+                                predictionText.style.backgroundColor = 'gray';
+                                predictionText.textContent = 'Unknown';
+                            }
+                        }
+                        const predictedClass = "{{ predicted_class|safe }}";
+                        updatePrediction(predictedClass);
+                    </script>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2">
+                    <table border="1" style="margin: auto; border: black;">
+                        <tr>
+                            <td style="padding: 10px; text-align: center;">Identified File Type:</td>
+                            <td style="padding: 10px; text-align: center;">JPG</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; text-align: center;">Face Detected:</td>
+                            <td style="padding: 10px; text-align: center;">True</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; text-align: center;">Probability to Fake:</td>
+                            <td style="padding: 10px; text-align: center;">{{ probability|floatformat:2 }}%</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; text-align: center;">Threshold Value:</td>
+                            <td style="padding: 10px; text-align: center;">{{ threshold }}</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+            
+                <tr >
+                    <td colspan="2">
+                        <div class="center">
+                            <div class="gauge-container">
+                                <div class="needle" id="needle"></div>
+                                <div class="gauge-scale">
+                                    <span>0</span>
+                                    <span>0.2</span>
+                                    <span>0.4</span>
+                                    <span>0.6</span>
+                                    <span>0.8</span>
+                                    <span>1</span>
+                                </div>
+                                <div class="labels">
+                                    <span class="fake">Fake</span>
+                                    <span class="real">Real</span>
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+                            const thresholdValue = {{ threshold|safe }};
+                            function updateNeedle(value) {
+                                const needle = document.getElementById('needle');
+                                const gaugeContainer = document.querySelector('.gauge-container');
+                                const containerWidth = gaugeContainer.offsetWidth;
+                                const clampedValue = Math.max(0, Math.min(value, 1));
+                                const leftPosition = clampedValue * (containerWidth - 15); // Adjust margin/padding offset
+                                needle.style.left = `${leftPosition}px`;
+                            }
+                            updateNeedle(thresholdValue);
+                        </script>
+                    </td>
+                </tr>
+                    
+            
+
+            <tr>
+                
+                <td style="text-align: center;">
+                    <p>Original Image</p>
+                    <figure class="image image_resized">
+                        <picture>
+                            <img src="data:image/png;base64,{{ original_image }}" alt="Original Image" width="250" height="auto">
+                        </picture>
+                    </figure>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</figure>
+
+<style>
+    body {
+        background-image: url('https://wallpapers.com/images/hd/tech-background-2h35klpvdjfjmx5e.jpg');
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+    }
+    .gauge-container {
+        position: relative;
+        width: 400px;
+        height: 100px;
+        border: 2px solid black;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        padding: 0;
+    }
+    .gauge-scale {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+    .needle {
+        position: absolute;
+        bottom: 0;
+        width: 2px;
+        height: 100%;
+        background: red;
+        transition: left 0.3s ease;
+    }
+    .labels {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        position: absolute;
+        top: 10px;
+        font-weight: bold;
+    }
+    .labels .fake {
+        color: rgb(255, 0, 0);
+    }
+    .labels .real {
+        color: rgb(12, 125, 2);
+        text-align:
+         right;
+    }
+    .center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 20px 0;
+}
+</style>
+
+{% endblock %}

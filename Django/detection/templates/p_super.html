@@ -1,0 +1,358 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}index{% endblock %}
+
+{% block content %}
+<figure class="table"></figure>
+    <table class="" >
+        <colgroup>
+            <col style="width:40%;">
+            <col style="width:50%;">
+        </colgroup>
+        <tbody>
+            <tr>
+                <td colspan="2" style="text-align: center;">
+                    <figure class="image image_resized" style=" text-align: center;" data-ckbox-resource-id="ff_IENenIurL"></figure>
+                        <picture>
+                            <!--<img src="" alt="" width="250" height="auto">-->
+                        </picture>
+                    </figure>
+                </td>
+                
+
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <img src="{% static 'images/logo2.png' %}" alt="logo" width="250" height="auto">
+                    <p style="margin-top: -10px; font-weight: bold;">Deep Fake Detector (Beta version)</p>
+                   
+                    
+                </td>
+                
+
+            </tr>
+            
+        
+            
+            
+            <tr >
+                
+                <td colspan="2" style="text-align: justify; padding-right: 150px; padding-left: 150px;"> 
+                    
+                    <h2>Video Prediction - Multi Model</h2>
+                    <p style="text-align: justify; "> 
+
+                        De-Sight's multimodal deepfake detection leverages three AI models — I1 (Image Prediction Model), V1 (Video Prediction Model), and A1 (Audio Prediction Model) — to ensure accurate and reliable deepfake identification. The workflow begins by extracting both video frames and audio from the uploaded video. First, the I1 model analyzes individual frames to detect image-level manipulations. Next, the V1 model processes the sequence of frames to capture temporal inconsistencies. Simultaneously, the A1 model examines the extracted audio, identifying any mismatches between speech patterns and facial movements. Finally, the system combines the predictions from all three models by calculating an average confidence score, 
+                        providing a comprehensive real vs. fake assessment. This multimodal approach enhances detection accuracy by cross-verifying results across visual and audio data.<br><br>
+                    
+                    
+                    <div style="display: flex; justify-content: center;">
+                        <form id="videoForm" action="{% url 'predict_video' %}" method="post" enctype="multipart/form-data" class="upload-form" style="margin: 0; text-align: center; background: rgba(255, 255, 255, 0.95); border: 2px solid #21687e; transition: transform 0.3s ease;">
+                            {% csrf_token %}
+                            <div class="file-upload-wrapper" style="padding: 20px;">
+                                <label for="videoToUpload" style="color: #21687e; font-size: 18px; margin-bottom: 15px; display: block;">Select Video File</label>
+                                <input type="file" id="videoToUpload" name="videoToUpload" accept="video/*" required 
+                                       style="width: calc(100% - 20px); 
+                                              margin: 10px auto;
+                                              padding: 10px;
+                                              border: 2px dashed #21687e; 
+                                              border-radius: 8px; 
+                                              transition: all 0.3s ease;
+                                              background-color: #f8f9fa; 
+                                              color: #21687e; 
+                                              font-size: 14px; 
+                                              cursor: pointer;
+                                              display: block;">
+                            </div>
+                            <button type="submit" class="button" style="background-color: #21687e; margin-top: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                <span style="font-weight: 600; letter-spacing: 1px;">Try Now</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Add processing overlay -->
+                    <div id="processingOverlay" style="display: none;">
+                        <div class="processing-content">
+                            <h3>Processing Video</h3>
+                            <div class="progress-bar">
+                                <div id="progressBar" class="progress"></div>
+                            </div>
+                            <p id="statusText">Detecting faces...</p>
+                        </div>
+                    </div>
+
+                    <!-- Add required styles -->
+                    <style>
+                        #processingOverlay {
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background: rgba(0, 0, 0, 0.8);
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            z-index: 1000;
+                        }
+
+                        .processing-content {
+                            background: white;
+                            padding: 2rem;
+                            border-radius: 10px;
+                            text-align: center;
+                        }
+
+                        .progress-bar {
+                            width: 300px;
+                            height: 20px;
+                            background: #f0f0f0;
+                            border-radius: 10px;
+                            overflow: hidden;
+                            margin: 1rem 0;
+                        }
+
+                        .progress {
+                            width: 0%;
+                            height: 100%;
+                            background: #21687e;
+                            transition: width 0.3s ease;
+                        }
+                    </style>
+
+                    <!-- Add JavaScript for form handling -->
+                    <script>
+                    document.getElementById('videoForm').addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        
+                        const formData = new FormData(this);
+                        const overlay = document.getElementById('processingOverlay');
+                        const progressBar = document.getElementById('progressBar');
+                        const statusText = document.getElementById('statusText');
+                        
+                        overlay.style.display = 'flex';
+                        
+                        let progress = 0;
+                        const progressInterval = setInterval(() => {
+                            if (progress < 90) {
+                                progress += 10;
+                                progressBar.style.width = progress + '%';
+                                
+                                if (progress < 30) {
+                                    statusText.textContent = 'Detecting faces...';
+                                } else if (progress < 60) {
+                                    statusText.textContent = 'Processing frames...';
+                                } else {
+                                    statusText.textContent = 'Analyzing video (This may take a while)...';
+                                }
+                            }
+                        }, 500);
+
+                        fetch(this.action, {
+                            method: 'POST',
+                            body: formData,
+                        })
+                        .then(response => response.text())
+                        .then(html => {
+                            clearInterval(progressInterval);
+                            progressBar.style.width = '100%';
+                            statusText.textContent = 'Complete!';
+                            
+                            setTimeout(() => {
+                                document.open();
+                                document.write(html);
+                                document.close();
+                            }, 500);
+                        })
+                        .catch(error => {
+                            clearInterval(progressInterval);
+                            statusText.textContent = 'Error: ' + error.message;
+                            progressBar.style.backgroundColor = '#ff4444';
+                        });
+                    });
+                    </script>
+                    
+                </td>
+
+            </tr>
+            
+            
+            
+        </tbody>
+    </table>
+</figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+
+
+
+
+<style>
+.upload-form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            margin: 50px;
+            
+        }
+
+        .upload-form input[type="file"] {
+            margin-bottom: 15px;
+            display: block;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .upload-form input[type="submit"] {
+            background-color: #21687e;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        .upload-form input[type="submit"]:hover {
+            background-color: #21687e;
+        }
+
+        .upload-form label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+
+        body {
+                    background-image: url('https://wallpapers.com/images/hd/tech-background-2h35klpvdjfjmx5e.jpg');
+                    background-attachment: fixed;
+                    background-position: center;
+                    background-size: cover;
+                    font-family: Arial, sans-serif;
+                    text-align: center;
+                    justify-content: center;
+                    align-items: center;
+                    display: flex;
+                }
+
+    h1 {
+        text-align:justify;
+        font-family: Arial, Helvetica, sans-serif; 
+        color: #21687e;
+
+    }
+
+    h2 {
+        text-align:justify;
+        font-family: Arial, Helvetica, sans-serif; 
+        color: #000000;
+
+    }
+    .button {
+      display: inline-block;
+      border-radius: 4px;
+      background-color: #f4511e;
+      border: none;
+      color: #FFFFFF;
+      text-align: center;
+      font-size: 20px;
+      padding: 15px;
+      width: 200px;
+      transition: all 0.5s;
+      cursor: pointer;
+      margin: 5px;
+    }
+    
+    .button span {
+      cursor: pointer;
+      display: inline-block;
+      position: relative;
+      transition: 0.5s;
+    }
+    
+    .button span:after {
+      content: '\00bb';
+      position: absolute;
+      opacity: 0;
+      top: 0;
+      right: -20px;
+      transition: 0.5s;
+    }
+    
+    .button:hover span {
+      padding-right: 25px;
+    }
+    
+    .button:hover span:after {
+      opacity: 1;
+      right: 0;
+    }
+
+
+
+    
+    
+    </style>
+
+    <!-- De-Sight Multimodal AI System Description -->
+    <div style="margin-top: 40px; padding: 30px; background: rgba(255,255,255,0.97); border-radius: 12px; box-shadow: 0 2px 8px rgba(33,104,126,0.08); max-width: 800px; margin-left: auto; margin-right: auto;">
+        <h2 style="color: #21687e; text-align: center;">How De-Sight Multimodal Deepfake Detection Works</h2>
+        <p style="font-size: 1.1em; text-align: justify;">
+            <strong>De-Sight</strong> uses a powerful multimodal AI system to detect deepfakes with high accuracy. It combines insights from images, video sequences, and audio to ensure reliable detection.
+        </p>
+        <ul style="font-size: 1.1em;">
+            <li><strong>🧠 Our Three AI Models:</strong></li>
+            <ul>
+                <li><strong>I1 – Image Model</strong><br>Analyzes individual video frames for visual manipulation.</li>
+                <li><strong>V1 – Video Model</strong><br>Examines frame sequences to detect unnatural motion or inconsistencies.</li>
+                <li><strong>A1 – Audio Model</strong><br>Checks if the audio matches facial movements and speech patterns.</li>
+            </ul>
+        </ul>
+        <ul style="font-size: 1.1em;">
+            <li><strong>🔄 Detection Workflow:</strong></li>
+            <ul>
+                <li><strong>Upload Video</strong> – De-Sight extracts frames and audio.</li>
+                <li><strong>Analyze Images</strong> – I1 checks for altered or fake visuals.</li>
+                <li><strong>Analyze Video</strong> – V1 tracks frame-to-frame consistency.</li>
+                <li><strong>Analyze Audio</strong> – A1 verifies speech and lip-sync accuracy.</li>
+                <li><strong>Final Result</strong> – All results are combined into one clear confidence score: <br><strong>Real or Fake.</strong></li>
+            </ul>
+        </ul>
+        <ul style="font-size: 1.1em;">
+            <li><strong>✅ Why It Works:</strong></li>
+            <ul>
+                <li>By using three types of data (image, video, audio) together, De-Sight cross-verifies findings, improving accuracy and reducing false results.</li>
+            </ul>
+        </ul>
+    </div>
+    <!-- End De-Sight Description -->
+
+{% endblock %}
