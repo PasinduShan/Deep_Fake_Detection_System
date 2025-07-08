@@ -24,8 +24,9 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    <img src="{% static 'images/logo2.png' %}" alt="logo" width="250" height="auto">
-                    <p style="margin-top: -10px; font-weight: bold;">Deep Fake Detector (Beta version)</p>
+
+                    
+                    <h1 style="margin-top: -10px; font-weight: bold; text-align: center;">Deep Fake Detector - Video </h1>
                    
                     
                 </td>
@@ -66,7 +67,7 @@
                                               display: block;">
                             </div>
                             <button type="submit" class="button" style="background-color: #21687e; margin-top: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                                <span style="font-weight: 600; letter-spacing: 1px;">Try Now</span>
+                                <span style="font-weight: 600; letter-spacing: 1px;">Analyze</span>
                             </button>
                         </form>
                     </div>
@@ -322,37 +323,7 @@
     
     </style>
 
-    <!-- De-Sight Multimodal AI System Description -->
-    <div style="margin-top: 40px; padding: 30px; background: rgba(255,255,255,0.97); border-radius: 12px; box-shadow: 0 2px 8px rgba(33,104,126,0.08); max-width: 800px; margin-left: auto; margin-right: auto;">
-        <h2 style="color: #21687e; text-align: center;">How De-Sight Multimodal Deepfake Detection Works</h2>
-        <p style="font-size: 1.1em; text-align: justify;">
-            <strong>De-Sight</strong> uses a powerful multimodal AI system to detect deepfakes with high accuracy. It combines insights from images, video sequences, and audio to ensure reliable detection.
-        </p>
-        <ul style="font-size: 1.1em;">
-            <li><strong>🧠 Our Three AI Models:</strong></li>
-            <ul>
-                <li><strong>I1 – Image Model</strong><br>Analyzes individual video frames for visual manipulation.</li>
-                <li><strong>V1 – Video Model</strong><br>Examines frame sequences to detect unnatural motion or inconsistencies.</li>
-                <li><strong>A1 – Audio Model</strong><br>Checks if the audio matches facial movements and speech patterns.</li>
-            </ul>
-        </ul>
-        <ul style="font-size: 1.1em;">
-            <li><strong>🔄 Detection Workflow:</strong></li>
-            <ul>
-                <li><strong>Upload Video</strong> – De-Sight extracts frames and audio.</li>
-                <li><strong>Analyze Images</strong> – I1 checks for altered or fake visuals.</li>
-                <li><strong>Analyze Video</strong> – V1 tracks frame-to-frame consistency.</li>
-                <li><strong>Analyze Audio</strong> – A1 verifies speech and lip-sync accuracy.</li>
-                <li><strong>Final Result</strong> – All results are combined into one clear confidence score: <br><strong>Real or Fake.</strong></li>
-            </ul>
-        </ul>
-        <ul style="font-size: 1.1em;">
-            <li><strong>✅ Why It Works:</strong></li>
-            <ul>
-                <li>By using three types of data (image, video, audio) together, De-Sight cross-verifies findings, improving accuracy and reducing false results.</li>
-            </ul>
-        </ul>
-    </div>
-    <!-- End De-Sight Description -->
+    
+    
 
 {% endblock %}
